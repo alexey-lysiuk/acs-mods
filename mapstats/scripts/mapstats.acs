@@ -1,0 +1,282 @@
+#library "mapstats"
+
+#include "zcommon.acs"
+
+
+// TODO: spawn IDs above 255
+
+str DOOM_NAMES[256] =
+{
+	"",
+	"Sergeant",
+	"Chaingunner",
+	"Baron of Hell",
+	"Zombieman",
+	"Imp",
+	"Arachnotron",
+	"Spider Mastermind",
+	"Demon",
+	"Spectre",
+	// 10
+	"Imp Fireball",
+	"Clip",
+	"Shotgun Shells",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Cacodemon",
+	// 20
+	"Revenant",
+	"",
+	"Armor Bonus",
+	"Stimpack",
+	"Medikit",
+	"Soul Sphere",
+	"",
+	"Shotgun",
+	"Chaingun",
+	"Rocket Launcher",
+	// 30
+	"Plasma Rifle",
+	"BFG 9000",
+	"Chainsaw",
+	"Super Shotgun",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 40
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 50
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 60
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Armor",
+	"MegaArmor",
+	// 70
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Energy Cell",
+	"",
+	"",
+	"",
+	"",
+	// 80
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Blue Keycard",
+	"Red Keycard",
+	"Yellow Keycard",
+	"Yellow Skull Key",
+	"Red Skull Key",
+	// 90
+	"Blue Skull Key",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 100
+	"Stealth Baron of Hell",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 110
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 120
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Exploding Barrel",
+	"",
+	"",
+	"",
+	"",
+	// 130
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Partial Invisibility",
+	"Radiation Suit",
+	"Computer Area Map",
+	"Light Amplification Visor",
+	"Box of Bullets",
+	// 140
+	"Rocket",
+	"Box of Rockets",
+	"Energy Cell Pack",
+	"Box of Shotgun Shells",
+	"Backpack",
+	"",
+	"",
+	"",
+	"",
+	"",
+	// 150
+	"",
+	"",
+	"Health Bonus",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+};
+
+str NAME_FILLER[25] =
+{
+	"                         ",
+	"                        ",
+	"                       ",
+	"                      ",
+	"                     ",
+	"                    ",
+	"                   ",
+	"                  ",
+	"                 ",
+	"                ",
+	"               ",
+	"              ",
+	"             ",
+	"            ",
+	"           ",
+	"          ",
+	"         ",
+	"        ",
+	"       ",
+	"      ",
+	"     ",
+	"    ",
+	"   ",
+	"  ",
+	" ",
+};
+
+
+function str ExpandName(str name)
+{
+	int length = StrLen(name);
+	str filler;
+	
+	if (length < 25)
+	{
+		filler = NAME_FILLER[length];
+	}
+	else if (length > 25)
+	{
+		name = StrLeft(name, 25);
+	}
+	
+	return StrParam(s:name, s:filler);
+}
+
+function str ExpandInteger(int value)
+{
+	str valueStr = StrParam(i:value);
+
+	int length = StrLen(valueStr);
+	str filler;
+
+	switch (length)
+	{
+		case 1: filler = "    "; break;
+		case 2: filler = "   "; break;
+		case 3: filler = "  "; break;
+		case 4: filler = " "; break;
+	}
+	
+	return StrParam(s:filler, s:valueStr);
+}
+
+
+script "Stats" Enter
+{
+// 	if (CheckActorClass(0, "DoomPlayer"))
+// 	{
+// 		Log(s:"It's Doom!");
+// 	}
+
+	Log(s:"+-------+---------------------------+-------+");
+	Log(s:"| Type  | Name                      | Count +");
+	Log(s:"+-------+---------------------------+-------+");
+
+	for (int i = 1; i < 256; ++i)  // TODO: spawn IDs above 255
+	{
+		int count = ThingCount(i, 0);
+		
+		if (count > 0)
+		{
+			str values[3] = 
+			{
+				ExpandInteger(i),
+				ExpandName(DOOM_NAMES[i]),
+				ExpandInteger(count)
+			};
+
+			Log(s:"| " , s:values[0], s:" | ", s:values[1], s:" | ", s:values[2], s:" |");
+		}
+	}
+	
+	Log(s:"+-------+---------------------------+-------+");
+}
