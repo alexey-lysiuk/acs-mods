@@ -1,0 +1,29 @@
+#library "hxnoresp"
+
+#include "zcommon.acs"
+
+script "HexenNoRespawn" Enter
+{
+	// TODO: is there better way to detect Hexen?
+
+	if (   !CheckActorClass(0, "FighterPlayer")
+		&& !CheckActorClass(0, "ClericPlayer")
+		&& !CheckActorClass(0, "MagePlayer"))
+	{
+		//Log(s:"[hxnoresp] Not playing Hexen");
+		terminate;
+	}
+	
+	int levelNum = GetLevelInfo(LEVELINFO_LEVELNUM);
+	//Log(s:"[hxnoresp] LevelNum = ", i:levelNum);
+	
+	if (40 == levelNum) // MAP40 Dark Crucible (battle with Korax)
+	{
+		//Log(s:"[hxnoresp] No repspawn on MAP40 Dark Crucible");
+		terminate;
+	}
+	
+	ACS_Terminate(255, 0);
+	
+	Log(s:"Monster spawning disabled!");
+}
