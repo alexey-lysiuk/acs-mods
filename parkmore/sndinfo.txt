@@ -1,0 +1,10 @@
+parkmore/walljump   sounds/pm_walljump.ogg
+parkmore/wallkick   sounds/pm_wallkick.ogg
+parkmore/ledgegrab  sounds/pm_ledgegrab.ogg
+parkmore/dodge      sounds/pm_dodge.ogg
+parkmore/multijump  sounds/pm_multijump.ogg
+
+$volume parkmore/walljump 0.5
+$volume parkmore/wallkick 0.5
+$volume parkmore/multijump 0.25
+$volume parkmore/dodge 0.5
