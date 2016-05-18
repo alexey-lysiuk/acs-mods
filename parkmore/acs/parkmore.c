@@ -1,5 +1,6 @@
-#include "zcommon.acs"
 #library "parkmore"
+
+#include "zcommon.acs"
 
 #include "commonFuncs.h"
 #include "parkConst.h"
@@ -17,7 +18,6 @@ int PlayerGrounds[PLAYERMAX][2];
 int DidSpecials[PLAYERMAX];
 int playerTimers[PLAYERMAX][TIMER_COUNT];
 int ClientEnterLocks[PLAYERMAX];
-int IsServer;
 
 /* Comment markers:
  *  :TURNING    - Turning scripts
@@ -959,14 +959,6 @@ function void HighJump(int force)
 
 script PARKMORE_OPEN open
 {
-    if (GetCVar("parkmore_jumpcount") == 0)
-    {
-        ConsoleCommand("set parkmore_jumpcount 2");
-        ConsoleCommand("archivecvar parkmore_jumpcount");
-    }
-
-    IsServer = 1;
-
     int cjumps, oldcjumps;
     
     while (1)
@@ -976,7 +968,6 @@ script PARKMORE_OPEN open
 
         if (cjumps != oldcjumps) { MaxJumpCount = cjumps; }
 
-        if (!GetCvar("compat_clientssendfullbuttoninfo")) { ConsoleCommand("set compat_clientssendfullbuttoninfo 1"); }
         Delay(1);
     }
 }
@@ -993,8 +984,8 @@ function void addTimer(int pln, int which, int add)
 
 function void addCTimers(int pln)
 {
-    int i = max(0, defaultCVar("parkmore_cl_dodgewindow",  8));
-    int j = max(0, defaultCVar("parkmore_cl_hijumpwindow", 4));
+    int i = max(0, GetCVar("parkmore_cl_dodgewindow"));
+    int j = max(0, GetCVar("parkmore_cl_hijumpwindow"));
 
     addTimer(pln, TIMER_CFORWARD,  keyPressed(BT_FORWARD)   * i);
     addTimer(pln, TIMER_CRIGHT,    keyPressed(BT_MOVERIGHT) * i);
@@ -1127,12 +1118,7 @@ script PARKMORE_ENTER2 enter clientside
     int flags, oflags;
     int i, j, k;
 
-    if (ConsolePlayerNumber() != pln && !IsServer) { terminate; }
-
     ClientEnterLocks[pln] = myLock;
-
-    // we want its side effect
-    defaultCVar("parkmore_cl_nocamerajerk", 0);
 
     while (ClientEnterLocks[pln] == myLock)
     {
@@ -1207,16 +1193,7 @@ script PARKMORE_ENTER2 enter clientside
                                              d:getTimer(pln, TIMER_CBACK), s:" (back))");
                 }
 
-                if (!IsServer)
-                {
-                    pukeStr = StrParam(s:"puke -", d:PARKMORE_REQUESTDODGE, s:" ", d:dodgeDir);
-                    if (GetCVar("parkmore_cl_debug")) { Print(s:"should be dodge: ", s:pukeStr); }
-                    ConsoleCommand(pukeStr);
-                }
-                else
-                {
-                    ACS_ExecuteWithResult(PARKMORE_WALLBOUNCE, WB_DODGE, dodgeDir, 0);
-                }
+                ACS_ExecuteWithResult(PARKMORE_WALLBOUNCE, WB_DODGE, dodgeDir, 0);
             }
         }
 
@@ -1253,29 +1230,11 @@ script PARKMORE_ENTER2 enter clientside
 
             if (i == 2)
             {
-                if (!IsServer)
-                {
-                    pukeStr = StrParam(s:"puke -", d:PARKMORE_REQUESTDODGE, s:" ", d:-256);
-                    if (GetCVar("parkmore_cl_debug")) { Print(s:"should be wall kick: ", s:pukeStr); }
-                    ConsoleCommand(pukeStr);
-                }
-                else
-                {
-                    ACS_ExecuteWithResult(PARKMORE_WALLBOUNCE, WB_KICKUP, WD_KICK);
-                }
+                ACS_ExecuteWithResult(PARKMORE_WALLBOUNCE, WB_KICKUP, WD_KICK);
             }
             else if (i == 1)
             {
-                if (!IsServer)
-                {
-                    pukeStr = StrParam(s:"puke -", d:PARKMORE_REQUESTDODGE, s:" ", d:-dDirection);
-                    if (GetCVar("parkmore_cl_debug")) { Print(s:"should be wall jump: ", s:pukeStr); }
-                    ConsoleCommand(pukeStr);
-                }
-                else
-                {
-                    ACS_ExecuteWithResult(PARKMORE_WALLBOUNCE, WB_KICK, dDirection);
-                }
+                ACS_ExecuteWithResult(PARKMORE_WALLBOUNCE, WB_KICK, dDirection);
             }
             else { dDirection = -1; }
 
@@ -1310,13 +1269,7 @@ script PARKMORE_ENTER2 enter clientside
             else*/
             if (!(ground || (GetActorVelZ(0) < 0 && wasGround) || wasGround >= (MJUMP_DELAY-2) || inWater || dDirection != -1))
             {
-                if (!IsServer)
-                {
-                    pukeStr = StrParam(s:"puke -", d:PARKMORE_REQUESTDODGE, s:" 0 0 1");
-                    if (GetCVar("parkmore_cl_debug")) { Print(s:"should be multijump: ", s:pukeStr); }
-                    ConsoleCommand(pukeStr);
-                }
-                else if (!DidSpecials[pln] && !grabbing[pln])
+                if (!DidSpecials[pln] && !grabbing[pln])
                 {
                     MultiJump(1, 0);
                 }

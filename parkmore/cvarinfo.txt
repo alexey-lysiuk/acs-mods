@@ -1,0 +1,7 @@
+server int parkmore_jumpcount = 2;
+
+user int parkmore_cl_dodgewindow = 8;
+user int parkmore_cl_hijumpwindow = 4;
+user int parkmore_cl_nocamerajerk = 0;
+
+user noarchive int parkmore_cl_debug = 0;

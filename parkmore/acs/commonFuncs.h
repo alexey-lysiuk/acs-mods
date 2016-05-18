@@ -281,16 +281,6 @@ function int sqrt_i(int number)
     return oldAns;
 }
 
-function int sqrt(int number)
-{
-    if (number == 1.0) { return 1.0; }
-    if (number <= 0) { return 0; }
-    int val = 150.0;
-    for (int i=0; i<15; i++) { val = (val + FixedDiv(number, val)) >> 1; }
-
-    return val;
-}
-
 function int magnitudeTwo(int x, int y)
 {
     return sqrt_i(x*x + y*y);
@@ -535,26 +525,6 @@ function int sliceString(int string, int start, int end)
     return ret;
 }
 
-function int strcmp(int str1, int str2)
-{
-    int i,j,k,l;
-    int len1 = StrLen(str1);
-    int len2 = StrLen(str2);
-    j = max(len1, len2);
-
-    for (i = 0; i < j; i++)
-    {
-        if (i >= len1) { return -1; }
-        if (i >= len2) { return  1; }
-        
-        k = GetChar(str1, i); l = GetChar(str2, i);
-
-        if (k > j) { return  1; }
-        if (k < j) { return -1; }
-    }
-    return 0;
-}
-
 
 // End StrParam
 
@@ -756,21 +726,6 @@ function int condFalse(int test, int falseRet)
     return falseRet;
 }
 
-function void saveCVar(int cvar, int val)
-{
-    int setStr = StrParam(s:"set ", s:cvar, s:" ", d:val);
-    int arcStr = StrParam(s:"archivecvar ", s:cvar);
-    ConsoleCommand(setStr); ConsoleCommand(arcStr);
-}
-
-function int defaultCVar(int cvar, int defaultVal)
-{
-    int ret = GetCVar(cvar);
-    if (ret == 0) { saveCVar(cvar, defaultVal); return defaultVal; }
-
-    return ret;
-}
-
 
 function int onGround(int tid)
 {
@@ -850,48 +805,6 @@ function int isInvulnerable(void)
     int check2 = CheckInventory("PowerInvulnerable");
 
     return check1 || check2;
-}
-
-function void saveStringCVar(int string, int cvarname)
-{
-    int slen = StrLen(string);
-    int i, c, cvarname2;
-
-    for (i = 0; i < slen; i++)
-    {
-        cvarname2 = StrParam(s:cvarname, s:"_char", d:i);
-        SaveCVar(cvarname2, GetChar(string, i));
-    }
-
-    while (1)
-    {
-        cvarname2 = StrParam(s:cvarname, s:"_char", d:i);
-        c = GetCVar(cvarname2);
-
-        if (c == 0) { break; }
-
-        ConsoleCommand(StrParam(s:"unset ", s:cvarname2));
-        i += 1;
-    }
-}
-
-function int loadStringCVar(int cvarname)
-{
-    int ret = "";
-    int i = 0, c, cvarname2;
-
-    while (1)
-    {
-        cvarname2 = StrParam(s:cvarname, s:"_char", d:i);
-        c = GetCVar(cvarname2);
-
-        if (c == 0) { break; }
-
-        ret = StrParam(s:ret, c:c);
-        i += 1;
-    }
-
-    return ret;
 }
 
 function int defaultTID(int def)
