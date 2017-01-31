@@ -1,0 +1,13 @@
+#library "chtcvar"
+
+#include "zcommon.acs"
+
+script 1 (void)
+{
+	str cvar = "str_cheat_cvar";
+	str old = GetCVarString(cvar);
+	str new = StrParam(s:old, i:Random(0, 9));
+	SetCVarString(cvar, new);
+	
+	Log(s:"str_cheat_cvar = ", s:GetCVarString(cvar));
+}

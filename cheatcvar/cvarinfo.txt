@@ -1,0 +1,2 @@
+user cheat string str_cheat_cvar;
+user string str_normal_cvar;
