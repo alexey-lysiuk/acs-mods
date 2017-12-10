@@ -1,0 +1,11 @@
+#library "inftime"
+#include "zcommon.acs"
+
+script "InfiniteTime" ENTER
+{
+	for (int i = 10; i > 0; ++i)
+	{
+		ACS_Terminate(813, 0);
+		Delay(1);
+	}
+}
