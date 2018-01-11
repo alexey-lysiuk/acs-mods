@@ -1,0 +1,58 @@
+#library "ultimate"
+
+#include "zcommon.acs"
+
+
+global int 1:global_int;
+global int 2:global_int_array[];
+
+function void TestGlobalVariables(void)
+{
+    Log(s:"\ckTesting global variables");
+
+    global_int = 42; 
+    Log(s:"global_int = \ck", i:global_int);
+
+    for (int i = 0; i < 16; ++i)
+    {
+        global_int_array[i] = i * 16;
+    }
+
+    for (i = 0; i < 16; ++i)
+    {
+        Log(s:"global_int_array[\ck" , i:i, s:"\cc] = \ck", i:global_int_array[i]);
+    }
+
+    Log(s:"");
+}
+
+
+world int 1:world_str;
+world int 2:world_str_array[];
+
+function void TestWorldVariables(void)
+{
+    Log(s:"\ckTesting global variables");
+
+    world_str = "\"42\""; 
+    Log(s:"global_int = \ck", s:world_str);
+
+    for (int i = 0; i < 16; ++i)
+    {
+        world_str_array[i] = StrParam(s:"\"", i:i, s:"\"");
+    }
+
+    for (i = 0; i < 16; ++i)
+    {
+        Log(s:"world_str_array[\ck" , i:i, s:"\cc] = \ck", s:world_str_array[i]);
+    }
+
+    Log(s:"");
+}
+
+
+script "UltimateTest" enter
+{
+    TestGlobalVariables();
+    TestWorldVariables();
+}
